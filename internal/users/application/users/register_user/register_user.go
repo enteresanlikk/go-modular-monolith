@@ -1,6 +1,8 @@
 package register_user
 
 import (
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/enteresanlikk/go-modular-monolith/internal/users/domain/users"
@@ -32,16 +34,15 @@ func (s *UserService) Register(req *RegisterUserRequest) (*RegisterUserResponse,
 		return nil, users.ErrPasswordMismatch
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	var bcryptCost, _ = strconv.Atoi(os.Getenv("BCRYPT_COST"))
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcryptCost)
 	if err != nil {
 		return nil, err
 	}
 
 	user := &users.User{
-		Email:     req.Email,
-		Password:  string(hashedPassword),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		Email:    req.Email,
+		Password: string(hashedPassword),
 	}
 
 	if err := s.repo.Create(user); err != nil {

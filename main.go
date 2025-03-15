@@ -18,6 +18,7 @@ var requiredEnvVars = []string{
 	"DB_PASSWORD",
 	"DB_NAME",
 	"DB_SSLMODE",
+	"BCRYPT_COST",
 }
 
 func checkRequiredEnvironmentVariables() error {
