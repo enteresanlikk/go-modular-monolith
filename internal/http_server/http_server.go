@@ -11,29 +11,23 @@ import (
 
 	"github.com/enteresanlikk/go-modular-monolith/internal/config"
 	"github.com/enteresanlikk/go-modular-monolith/internal/users/presentation"
-	"github.com/gin-gonic/gin"
 )
 
 func Start() {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
-	ginMode := os.Getenv("GIN_MODE")
 
-	if ginMode == "release" {
-		gin.SetMode(gin.ReleaseMode)
-	}
-
-	router := gin.Default()
+	mux := http.NewServeMux()
 
 	// Initialize database
 	db := config.NewPostgresDB()
 
 	// Initialize user module with PostgreSQL repository
-	presentation.RegisterRoutes(router, db)
+	presentation.RegisterRoutes(mux, db)
 
 	server := &http.Server{
 		Addr:    host + ":" + port,
-		Handler: router,
+		Handler: mux,
 	}
 
 	go func() {
