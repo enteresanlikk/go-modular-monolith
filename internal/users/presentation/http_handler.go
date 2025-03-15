@@ -9,6 +9,7 @@ import (
 	"github.com/enteresanlikk/go-modular-monolith/internal/users/application/users/register_user"
 	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain/users"
 	users_infrastructure "github.com/enteresanlikk/go-modular-monolith/internal/users/infrastructure/users"
+	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
@@ -68,16 +69,14 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(common.SuccessDataResult("User logged in successfully", response))
 }
 
-var AuthRoute = &common.Route{
-	Path: "/auth",
-}
-
-func RegisterRoutes(mux *http.ServeMux, db *gorm.DB) {
+func RegisterRoutes(mux *mux.Router, db *gorm.DB) {
 	userRepo := users_infrastructure.NewUserRepository(db)
 	registerService := register_user.NewUserService(userRepo)
 	loginService := login_user.NewUserService(userRepo)
 	handler := NewAuthHandler(registerService, loginService)
 
-	mux.HandleFunc(AuthRoute.Create(common.POST, "/register"), handler.Register)
-	mux.HandleFunc(AuthRoute.Create(common.POST, "/login"), handler.Login)
+	authRouter := mux.PathPrefix("/auth").Subrouter()
+
+	authRouter.HandleFunc("/register", handler.Register).Methods(http.MethodPost)
+	authRouter.HandleFunc("/login", handler.Login).Methods(http.MethodPost)
 }
