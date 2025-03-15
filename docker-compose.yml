@@ -1,15 +1,19 @@
 services:
-  app:
-    container_name: go-modular-monolith-app
-    image: go-modular-monolith-app
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: unless-stopped
+  postgres:
+    image: postgres:16-alpine
     ports:
-      - "8080:8080"
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=go_modular_monolith
     networks:
       - backend
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 networks:
   backend:
+
+volumes:
+  postgres_data:

@@ -3,62 +3,72 @@ package presentation
 import (
 	"net/http"
 
-	"github.com/enteresanlikk/go-modular-monolith/internal/users/application"
+	"github.com/enteresanlikk/go-modular-monolith/internal/common"
+	"github.com/enteresanlikk/go-modular-monolith/internal/users/application/users/login_user"
+	"github.com/enteresanlikk/go-modular-monolith/internal/users/application/users/register_user"
+	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain/users"
+	users_infrastructure "github.com/enteresanlikk/go-modular-monolith/internal/users/infrastructure/users"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type AuthHandler struct {
-	authService application.AuthService
+	registerService register_user.UserService
+	loginService    login_user.UserService
 }
 
-func NewAuthHandler(authService application.AuthService) *AuthHandler {
+func NewAuthHandler(registerService *register_user.UserService, loginService *login_user.UserService) *AuthHandler {
 	return &AuthHandler{
-		authService: authService,
+		registerService: *registerService,
+		loginService:    *loginService,
 	}
 }
 
 func (h *AuthHandler) Register(c *gin.Context) {
-	var req application.RegisterRequest
+	var req register_user.RegisterUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, common.ErrorDataResult("Invalid request", err.Error()))
 		return
 	}
 
-	response, err := h.authService.Register(&req)
+	response, err := h.registerService.Register(&req)
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err == application.ErrPasswordMismatch {
+		if err == users_domain.ErrPasswordMismatch {
 			status = http.StatusBadRequest
 		}
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(status, common.ErrorDataResult("Failed to register user", err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusCreated, response)
+	c.JSON(http.StatusCreated, common.SuccessDataResult("User created successfully", response))
 }
 
 func (h *AuthHandler) Login(c *gin.Context) {
-	var req application.LoginRequest
+	var req login_user.LoginUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, common.ErrorDataResult("Invalid request", err.Error()))
 		return
 	}
 
-	response, err := h.authService.Login(&req)
+	response, err := h.loginService.Login(&req)
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err == application.ErrInvalidCredentials {
+		if err == users_domain.ErrInvalidCredentials {
 			status = http.StatusUnauthorized
 		}
-		c.JSON(status, gin.H{"error": err.Error()})
+		c.JSON(status, common.ErrorDataResult("Failed to login", err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, common.SuccessDataResult("User logged in successfully", response))
 }
 
-func RegisterRoutes(router *gin.Engine, authService application.AuthService) {
-	handler := NewAuthHandler(authService)
+func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
+	userRepo := users_infrastructure.NewUserRepository(db)
+	registerService := register_user.NewUserService(userRepo)
+	loginService := login_user.NewUserService(userRepo)
+	handler := NewAuthHandler(registerService, loginService)
 
 	auth := router.Group("/auth")
 	{

@@ -9,7 +9,16 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var requiredEnvVars = []string{"PORT", "HOST"}
+var requiredEnvVars = []string{
+	"PORT",
+	"HOST",
+	"DB_HOST",
+	"DB_PORT",
+	"DB_USER",
+	"DB_PASSWORD",
+	"DB_NAME",
+	"DB_SSLMODE",
+}
 
 func checkRequiredEnvironmentVariables() error {
 	for _, envVar := range requiredEnvVars {

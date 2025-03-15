@@ -9,8 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/enteresanlikk/go-modular-monolith/internal/users/application"
-	"github.com/enteresanlikk/go-modular-monolith/internal/users/infrastructure"
+	"github.com/enteresanlikk/go-modular-monolith/internal/config"
 	"github.com/enteresanlikk/go-modular-monolith/internal/users/presentation"
 	"github.com/gin-gonic/gin"
 )
@@ -18,13 +17,19 @@ import (
 func Start() {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
+	ginMode := os.Getenv("GIN_MODE")
+
+	if ginMode == "release" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	router := gin.Default()
 
-	// Initialize user module
-	userRepo := infrastructure.NewInMemoryUserRepository()
-	authService := application.NewAuthService(userRepo)
-	presentation.RegisterRoutes(router, authService)
+	// Initialize database
+	db := config.NewPostgresDB()
+
+	// Initialize user module with PostgreSQL repository
+	presentation.RegisterRoutes(router, db)
 
 	server := &http.Server{
 		Addr:    host + ":" + port,
