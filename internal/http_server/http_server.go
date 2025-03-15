@@ -2,7 +2,6 @@ package http_server
 
 import (
 	"context"
-	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -10,25 +9,31 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/enteresanlikk/go-modular-monolith/internal/hello"
+	"github.com/enteresanlikk/go-modular-monolith/internal/users/application"
+	"github.com/enteresanlikk/go-modular-monolith/internal/users/infrastructure"
+	"github.com/enteresanlikk/go-modular-monolith/internal/users/presentation"
+	"github.com/gin-gonic/gin"
 )
 
 func Start() {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 
-	mux := http.NewServeMux()
+	router := gin.Default()
+
+	// Initialize user module
+	userRepo := infrastructure.NewInMemoryUserRepository()
+	authService := application.NewAuthService(userRepo)
+	presentation.RegisterRoutes(router, authService)
 
 	server := &http.Server{
 		Addr:    host + ":" + port,
-		Handler: mux,
+		Handler: router,
 	}
-
-	hello.AddModule(mux)
 
 	go func() {
 		log.Printf("Server starting on http://%s:%s", host, port)
-		if err := server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("HTTP server error: %v", err)
 		}
 		log.Println("Stopped serving new connections.")
