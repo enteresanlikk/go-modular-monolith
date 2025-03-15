@@ -1,0 +1,15 @@
+services:
+  app:
+    container_name: go-modular-monolith-app
+    image: go-modular-monolith-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+
+networks:
+  backend:
