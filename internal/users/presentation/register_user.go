@@ -13,7 +13,7 @@ import (
 func (h *UsersHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var req users_application.RegisterUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		common_presentation.JsonResponseWithStatus(w, http.StatusBadRequest, common_domain.ErrorDataResult("Invalid request", err))
+		common_presentation.JsonResponseWithStatus(w, http.StatusBadRequest, common_domain.ErrorResult(err.Error()))
 		return
 	}
 
@@ -23,9 +23,9 @@ func (h *UsersHandler) Register(w http.ResponseWriter, r *http.Request) {
 		if err == users_domain.ErrPasswordMismatch {
 			status = http.StatusBadRequest
 		}
-		common_presentation.JsonResponseWithStatus(w, status, common_domain.ErrorDataResult("Failed to register user", err))
+		common_presentation.JsonResponseWithStatus(w, status, common_domain.ErrorResult(err.Error()))
 		return
 	}
 
-	common_presentation.JsonResponseWithStatus(w, http.StatusCreated, common_domain.SuccessDataResult("User created successfully", response))
+	common_presentation.JsonResponseWithStatus(w, http.StatusCreated, common_domain.SuccessDataResult("user_registered_successfully", response))
 }

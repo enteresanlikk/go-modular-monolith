@@ -13,7 +13,7 @@ import (
 func (h *UsersHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var req users_application.LoginUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		common_presentation.JsonResponseWithStatus(w, http.StatusBadRequest, common_domain.ErrorDataResult("Invalid request", err))
+		common_presentation.JsonResponseWithStatus(w, http.StatusBadRequest, common_domain.ErrorResult(err.Error()))
 		return
 	}
 
@@ -23,9 +23,9 @@ func (h *UsersHandler) Login(w http.ResponseWriter, r *http.Request) {
 		if err == users_domain.ErrInvalidCredentials {
 			status = http.StatusUnauthorized
 		}
-		common_presentation.JsonResponseWithStatus(w, status, common_domain.ErrorDataResult("Failed to login", err))
+		common_presentation.JsonResponseWithStatus(w, status, common_domain.ErrorResult(err.Error()))
 		return
 	}
 
-	common_presentation.JsonResponseWithStatus(w, http.StatusOK, common_domain.SuccessDataResult("User logged in successfully", response))
+	common_presentation.JsonResponseWithStatus(w, http.StatusOK, common_domain.SuccessDataResult("user_logged_in_successfully", response))
 }
