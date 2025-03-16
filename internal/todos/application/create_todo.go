@@ -1,6 +1,10 @@
 package todos_application
 
-import todos_domain "github.com/enteresanlikk/go-modular-monolith/internal/todos/domain"
+import (
+	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
+	todos_domain "github.com/enteresanlikk/go-modular-monolith/internal/todos/domain"
+	"github.com/google/uuid"
+)
 
 type CreateTodoRequest struct {
 	Title     string `json:"title" validate:"required"`
@@ -9,6 +13,9 @@ type CreateTodoRequest struct {
 
 func (s *TodoService) CreateTodo(req *CreateTodoRequest) (*TodoResponse, error) {
 	todo := &todos_domain.Todo{
+		Entity: common_domain.Entity{
+			ID: uuid.New(),
+		},
 		Title:     req.Title,
 		Completed: req.Completed,
 	}

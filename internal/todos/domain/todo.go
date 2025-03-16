@@ -2,8 +2,6 @@ package todos_domain
 
 import (
 	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
-	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type Todo struct {
@@ -15,9 +13,4 @@ type Todo struct {
 
 func (Todo) TableName() string {
 	return "todos.todos"
-}
-
-func (t *Todo) BeforeCreate(tx *gorm.DB) (err error) {
-	t.ID = uuid.New()
-	return
 }
