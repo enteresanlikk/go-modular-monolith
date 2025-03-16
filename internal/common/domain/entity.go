@@ -4,16 +4,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type Entity struct {
 	ID        uuid.UUID `json:"id" gorm:"type:uuid;primary_key"`
 	CreatedAt time.Time `json:"createdAt" gorm:"autoCreateTime"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"autoUpdateTime"`
-}
-
-func (e *Entity) BeforeCreate(tx *gorm.DB) (err error) {
-	e.ID = uuid.New()
-	return
 }
