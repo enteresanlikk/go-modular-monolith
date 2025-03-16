@@ -1,15 +1,15 @@
-package users_application
+package usersApplication
 
 import (
-	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
+	usersDomain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 )
 
 type UserService struct {
-	repo         users_domain.UserRepository
-	tokenService users_domain.TokenService
+	repo         usersDomain.UserRepository
+	tokenService usersDomain.TokenService
 }
 
-func NewUserService(repo users_domain.UserRepository, tokenService users_domain.TokenService) *UserService {
+func NewUserService(repo usersDomain.UserRepository, tokenService usersDomain.TokenService) *UserService {
 	return &UserService{
 		repo:         repo,
 		tokenService: tokenService,

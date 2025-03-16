@@ -1,4 +1,4 @@
-package todos_application
+package todosApplication
 
 import "github.com/google/uuid"
 

@@ -1,12 +1,12 @@
-package todos_domain
+package todosDomain
 
 import (
-	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
+	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	"github.com/google/uuid"
 )
 
 type Todo struct {
-	common_domain.Entity
+	commonDomain.Entity
 
 	Title     string `json:"title" gorm:"not null"`
 	Completed bool   `json:"completed" gorm:"not null"`
@@ -18,7 +18,7 @@ func (Todo) TableName() string {
 
 func NewTodo(title string, completed bool) (*Todo, error) {
 	t := &Todo{
-		Entity: common_domain.Entity{
+		Entity: commonDomain.Entity{
 			ID: uuid.New(),
 		},
 		Title:     title,

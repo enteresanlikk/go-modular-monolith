@@ -1,7 +1,7 @@
-package users_application
+package usersApplication
 
 import (
-	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
+	usersDomain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -10,16 +10,16 @@ type LoginUserRequest struct {
 	Password string `json:"password" validate:"required,min=6"`
 }
 
-type TokenResponse = users_domain.TokenPair
+type TokenResponse = usersDomain.TokenPair
 
 func (s *UserService) Login(req *LoginUserRequest) (*TokenResponse, error) {
 	user, err := s.repo.FindByEmail(req.Email)
 	if err != nil {
-		return nil, users_domain.ErrInvalidCredentials
+		return nil, usersDomain.ErrInvalidCredentials
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		return nil, users_domain.ErrInvalidCredentials
+		return nil, usersDomain.ErrInvalidCredentials
 	}
 
 	claims := map[string]interface{}{

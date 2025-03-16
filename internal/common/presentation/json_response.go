@@ -1,4 +1,4 @@
-package common_presentation
+package commonPresentation
 
 import (
 	"encoding/json"

@@ -1,18 +1,18 @@
-package todos_presentation
+package todosPresentation
 
 import (
-	todos_application "github.com/enteresanlikk/go-modular-monolith/internal/todos/application"
+	todosApplication "github.com/enteresanlikk/go-modular-monolith/internal/todos/application"
 )
 
 type TodosHandler struct {
-	createTodoService  *todos_application.TodoService
-	getAllTodosService *todos_application.TodoService
-	getTodoByIdService *todos_application.TodoService
-	updateTodoService  *todos_application.TodoService
-	deleteTodoService  *todos_application.TodoService
+	createTodoService  *todosApplication.TodoService
+	getAllTodosService *todosApplication.TodoService
+	getTodoByIdService *todosApplication.TodoService
+	updateTodoService  *todosApplication.TodoService
+	deleteTodoService  *todosApplication.TodoService
 }
 
-func NewTodosHandler(createTodoService *todos_application.TodoService, getAllTodosService *todos_application.TodoService, getTodoByIdService *todos_application.TodoService, updateTodoService *todos_application.TodoService, deleteTodoService *todos_application.TodoService) *TodosHandler {
+func NewTodosHandler(createTodoService *todosApplication.TodoService, getAllTodosService *todosApplication.TodoService, getTodoByIdService *todosApplication.TodoService, updateTodoService *todosApplication.TodoService, deleteTodoService *todosApplication.TodoService) *TodosHandler {
 	return &TodosHandler{
 		createTodoService:  createTodoService,
 		getAllTodosService: getAllTodosService,

@@ -1,4 +1,4 @@
-package todos_domain
+package todosDomain
 
 import "github.com/google/uuid"
 

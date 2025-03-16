@@ -1,11 +1,11 @@
-package users_application
+package usersApplication
 
 import (
 	"os"
 	"strconv"
 	"strings"
 
-	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
+	usersDomain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -23,7 +23,7 @@ func (s *UserService) Register(req *RegisterUserRequest) (*TokenResponse, error)
 		return nil, err
 	}
 
-	user, err := users_domain.NewUser(
+	user, err := usersDomain.NewUser(
 		req.FirstName,
 		req.LastName,
 		strings.ToUpper(req.Email),

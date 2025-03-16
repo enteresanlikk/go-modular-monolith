@@ -1,4 +1,4 @@
-package common_domain
+package commonDomain
 
 import (
 	"time"

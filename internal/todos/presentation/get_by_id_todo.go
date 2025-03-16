@@ -1,26 +1,26 @@
-package todos_presentation
+package todosPresentation
 
 import (
 	"net/http"
 
-	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
-	common_presentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
-	todos_application "github.com/enteresanlikk/go-modular-monolith/internal/todos/application"
+	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
+	commonPresentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
+	todosApplication "github.com/enteresanlikk/go-modular-monolith/internal/todos/application"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
 func (s *TodosHandler) GetTodoById(w http.ResponseWriter, r *http.Request) {
-	req := todos_application.GetTodoByIdRequest{
+	req := todosApplication.GetTodoByIdRequest{
 		ID: uuid.MustParse(mux.Vars(r)["id"]),
 	}
 
 	response, err := s.getTodoByIdService.GetTodoById(&req)
 	if err != nil {
 		status := http.StatusInternalServerError
-		common_presentation.JsonResponseWithStatus(w, status, common_domain.ErrorResult(err.Error()))
+		commonPresentation.JsonResponseWithStatus(w, status, commonDomain.ErrorResult(err.Error()))
 		return
 	}
 
-	common_presentation.JsonResponseWithStatus(w, http.StatusOK, common_domain.SuccessDataResult("todo_fetched_successfully", response))
+	commonPresentation.JsonResponseWithStatus(w, http.StatusOK, commonDomain.SuccessDataResult("todo_fetched_successfully", response))
 }

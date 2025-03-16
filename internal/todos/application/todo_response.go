@@ -1,9 +1,9 @@
-package todos_application
+package todosApplication
 
 import (
 	"time"
 
-	todos_domain "github.com/enteresanlikk/go-modular-monolith/internal/todos/domain"
+	todosDomain "github.com/enteresanlikk/go-modular-monolith/internal/todos/domain"
 	"github.com/google/uuid"
 )
 
@@ -15,7 +15,7 @@ type TodoResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (t *TodoResponse) FromTodo(todo *todos_domain.Todo) *TodoResponse {
+func (t *TodoResponse) FromTodo(todo *todosDomain.Todo) *TodoResponse {
 	t.ID = todo.ID
 	t.Title = todo.Title
 	t.Completed = todo.Completed

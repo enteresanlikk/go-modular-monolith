@@ -1,7 +1,7 @@
-package todos_application
+package todosApplication
 
 import (
-	todos_domain "github.com/enteresanlikk/go-modular-monolith/internal/todos/domain"
+	todosDomain "github.com/enteresanlikk/go-modular-monolith/internal/todos/domain"
 )
 
 type CreateTodoRequest struct {
@@ -10,7 +10,7 @@ type CreateTodoRequest struct {
 }
 
 func (s *TodoService) CreateTodo(req *CreateTodoRequest) (*TodoResponse, error) {
-	todo, err := todos_domain.NewTodo(req.Title, req.Completed)
+	todo, err := todosDomain.NewTodo(req.Title, req.Completed)
 	if err != nil {
 		return nil, err
 	}

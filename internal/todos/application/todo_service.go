@@ -1,11 +1,11 @@
-package todos_application
+package todosApplication
 
-import todos_domain "github.com/enteresanlikk/go-modular-monolith/internal/todos/domain"
+import todosDomain "github.com/enteresanlikk/go-modular-monolith/internal/todos/domain"
 
 type TodoService struct {
-	repo todos_domain.TodoRepository
+	repo todosDomain.TodoRepository
 }
 
-func NewTodoService(repo todos_domain.TodoRepository) *TodoService {
+func NewTodoService(repo todosDomain.TodoRepository) *TodoService {
 	return &TodoService{repo: repo}
 }

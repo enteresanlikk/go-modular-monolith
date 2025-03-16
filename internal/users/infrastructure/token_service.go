@@ -1,30 +1,29 @@
-package users_infrastructure
+package usersInfrastructure
 
 import (
 	"fmt"
 	"time"
 
-	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
+	usersDomain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type tokenService struct {
-	config users_domain.TokenConfig
+	config usersDomain.TokenConfig
 }
 
-func NewTokenService(config users_domain.TokenConfig) users_domain.TokenService {
+func NewTokenService(config usersDomain.TokenConfig) usersDomain.TokenService {
 	return &tokenService{
 		config: config,
 	}
 }
 
-func (s *tokenService) GenerateTokenPair(claims map[string]interface{}) (*users_domain.TokenPair, error) {
+func (s *tokenService) GenerateTokenPair(claims map[string]interface{}) (*usersDomain.TokenPair, error) {
 	now := time.Now()
 	accessTokenExpiry := now.Add(s.config.AccessTokenDuration)
 	refreshTokenExpiry := now.Add(s.config.RefreshTokenDuration)
 
-	// Generate access token
-	tokenClaims := &users_domain.TokenClaims{
+	tokenClaims := &usersDomain.TokenClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(accessTokenExpiry),
 			IssuedAt:  jwt.NewNumericDate(now),
@@ -39,8 +38,7 @@ func (s *tokenService) GenerateTokenPair(claims map[string]interface{}) (*users_
 		return nil, fmt.Errorf("failed to sign access token: %w", err)
 	}
 
-	// Generate refresh token
-	refreshTokenClaims := &users_domain.TokenClaims{
+	refreshTokenClaims := &usersDomain.TokenClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(refreshTokenExpiry),
 			IssuedAt:  jwt.NewNumericDate(now),
@@ -55,20 +53,20 @@ func (s *tokenService) GenerateTokenPair(claims map[string]interface{}) (*users_
 		return nil, fmt.Errorf("failed to sign refresh token: %w", err)
 	}
 
-	return &users_domain.TokenPair{
+	return &usersDomain.TokenPair{
 		AccessToken:  accessTokenString,
 		RefreshToken: refreshTokenString,
 		ExpiresAt:    accessTokenExpiry.Unix(),
 	}, nil
 }
 
-func (s *tokenService) ValidateToken(tokenString string, tokenType users_domain.TokenType) (*users_domain.TokenClaims, error) {
+func (s *tokenService) ValidateToken(tokenString string, tokenType usersDomain.TokenType) (*usersDomain.TokenClaims, error) {
 	secret := s.config.AccessTokenSecret
-	if tokenType == users_domain.RefreshToken {
+	if tokenType == usersDomain.RefreshToken {
 		secret = s.config.RefreshTokenSecret
 	}
 
-	token, err := jwt.ParseWithClaims(tokenString, &users_domain.TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &usersDomain.TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
@@ -79,19 +77,17 @@ func (s *tokenService) ValidateToken(tokenString string, tokenType users_domain.
 		return nil, fmt.Errorf("failed to parse token: %w", err)
 	}
 
-	if claims, ok := token.Claims.(*users_domain.TokenClaims); ok && token.Valid {
+	if claims, ok := token.Claims.(*usersDomain.TokenClaims); ok && token.Valid {
 		return claims, nil
 	}
 
 	return nil, fmt.Errorf("invalid token")
 }
 
-func (s *tokenService) ParseToken(tokenString string) (*users_domain.TokenClaims, error) {
-	// Try with access token first
-	if claims, err := s.ValidateToken(tokenString, users_domain.AccessToken); err == nil {
+func (s *tokenService) ParseToken(tokenString string) (*usersDomain.TokenClaims, error) {
+	if claims, err := s.ValidateToken(tokenString, usersDomain.AccessToken); err == nil {
 		return claims, nil
 	}
 
-	// Try with refresh token if access token validation fails
-	return s.ValidateToken(tokenString, users_domain.RefreshToken)
+	return s.ValidateToken(tokenString, usersDomain.RefreshToken)
 }

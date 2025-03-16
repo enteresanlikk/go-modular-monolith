@@ -1,9 +1,9 @@
-package users_infrastructure
+package usersInfrastructure
 
 import (
 	"errors"
 
-	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
+	usersDomain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -12,25 +12,25 @@ type UserRepository struct {
 	db *gorm.DB
 }
 
-func NewUserRepository(db *gorm.DB) users_domain.UserRepository {
+func NewUserRepository(db *gorm.DB) usersDomain.UserRepository {
 	db.Exec("CREATE SCHEMA IF NOT EXISTS users")
 
-	db.AutoMigrate(&users_domain.User{})
-	db.AutoMigrate(&users_domain.Role{})
-	db.AutoMigrate(&users_domain.Permission{})
-	db.AutoMigrate(&users_domain.RolePermission{})
-	db.AutoMigrate(&users_domain.UserRole{})
+	db.AutoMigrate(&usersDomain.User{})
+	db.AutoMigrate(&usersDomain.Role{})
+	db.AutoMigrate(&usersDomain.Permission{})
+	db.AutoMigrate(&usersDomain.RolePermission{})
+	db.AutoMigrate(&usersDomain.UserRole{})
 
 	return &UserRepository{
 		db: db,
 	}
 }
 
-func (r *UserRepository) Create(user *users_domain.User) error {
-	var existingUser users_domain.User
+func (r *UserRepository) Create(user *usersDomain.User) error {
+	var existingUser usersDomain.User
 	result := r.db.Where("email = ?", user.Email).First(&existingUser)
 	if result.Error == nil {
-		return users_domain.ErrEmailAlreadyExist
+		return usersDomain.ErrEmailAlreadyExist
 	} else if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return result.Error
 	}
@@ -43,12 +43,12 @@ func (r *UserRepository) Create(user *users_domain.User) error {
 	return nil
 }
 
-func (r *UserRepository) FindByEmail(email string) (*users_domain.User, error) {
-	var user users_domain.User
+func (r *UserRepository) FindByEmail(email string) (*usersDomain.User, error) {
+	var user usersDomain.User
 	result := r.db.Where("email = ?", email).First(&user)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, users_domain.ErrUserNotFound
+			return nil, usersDomain.ErrUserNotFound
 		}
 		return nil, result.Error
 	}
@@ -56,12 +56,12 @@ func (r *UserRepository) FindByEmail(email string) (*users_domain.User, error) {
 	return &user, nil
 }
 
-func (r *UserRepository) FindByID(id uuid.UUID) (*users_domain.User, error) {
-	var user users_domain.User
+func (r *UserRepository) FindByID(id uuid.UUID) (*usersDomain.User, error) {
+	var user usersDomain.User
 	result := r.db.First(&user, "id = ?", id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, users_domain.ErrUserNotFound
+			return nil, usersDomain.ErrUserNotFound
 		}
 		return nil, result.Error
 	}

@@ -1,4 +1,4 @@
-package common_infrastructure
+package commonInfrastructure
 
 import (
 	"fmt"

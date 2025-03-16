@@ -1,31 +1,31 @@
-package users_presentation
+package usersPresentation
 
 import (
 	"encoding/json"
 	"net/http"
 
-	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
-	common_presentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
-	users_application "github.com/enteresanlikk/go-modular-monolith/internal/users/application"
-	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
+	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
+	commonPresentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
+	usersApplication "github.com/enteresanlikk/go-modular-monolith/internal/users/application"
+	usersDomain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 )
 
 func (h *UsersHandler) Login(w http.ResponseWriter, r *http.Request) {
-	var req users_application.LoginUserRequest
+	var req usersApplication.LoginUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		common_presentation.JsonResponseWithStatus(w, http.StatusBadRequest, common_domain.ErrorResult(err.Error()))
+		commonPresentation.JsonResponseWithStatus(w, http.StatusBadRequest, commonDomain.ErrorResult(err.Error()))
 		return
 	}
 
 	response, err := h.loginService.Login(&req)
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err == users_domain.ErrInvalidCredentials {
+		if err == usersDomain.ErrInvalidCredentials {
 			status = http.StatusUnauthorized
 		}
-		common_presentation.JsonResponseWithStatus(w, status, common_domain.ErrorResult(err.Error()))
+		commonPresentation.JsonResponseWithStatus(w, status, commonDomain.ErrorResult(err.Error()))
 		return
 	}
 
-	common_presentation.JsonResponseWithStatus(w, http.StatusOK, common_domain.SuccessDataResult("user_logged_in_successfully", response))
+	commonPresentation.JsonResponseWithStatus(w, http.StatusOK, commonDomain.SuccessDataResult("user_logged_in_successfully", response))
 }
