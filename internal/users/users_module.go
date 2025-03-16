@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func RegisterRoutes(mux *mux.Router, db *gorm.DB) {
+func Register(mux *mux.Router, db *gorm.DB) {
 	userRepo := users_infrastructure.NewUserRepository(db)
 	registerService := users_application.NewUserService(userRepo)
 	loginService := users_application.NewUserService(userRepo)

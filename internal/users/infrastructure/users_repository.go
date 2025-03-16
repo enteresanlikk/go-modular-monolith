@@ -13,9 +13,8 @@ type UserRepository struct {
 }
 
 func NewUserRepository(db *gorm.DB) users_domain.UserRepository {
-	// create users schema
 	db.Exec("CREATE SCHEMA IF NOT EXISTS users")
-	// Auto-migrate the users table
+
 	db.AutoMigrate(&users_domain.User{})
 
 	return &UserRepository{
@@ -24,7 +23,6 @@ func NewUserRepository(db *gorm.DB) users_domain.UserRepository {
 }
 
 func (r *UserRepository) Create(user *users_domain.User) error {
-	// Check if email already exists
 	var existingUser users_domain.User
 	result := r.db.Where("email = ?", user.Email).First(&existingUser)
 	if result.Error == nil {
@@ -33,7 +31,6 @@ func (r *UserRepository) Create(user *users_domain.User) error {
 		return result.Error
 	}
 
-	// Create new user
 	result = r.db.Create(user)
 	if result.Error != nil {
 		return result.Error

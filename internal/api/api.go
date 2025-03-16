@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/enteresanlikk/go-modular-monolith/internal/config"
+	common_infrastructure "github.com/enteresanlikk/go-modular-monolith/internal/common/infrastructure"
 	users_module "github.com/enteresanlikk/go-modular-monolith/internal/users"
 	"github.com/gorilla/mux"
 )
@@ -20,11 +20,9 @@ func Start() {
 
 	mux := mux.NewRouter()
 
-	// Initialize database
-	db := config.NewPostgresDB()
+	db := common_infrastructure.NewPostgresDB()
 
-	// Initialize user module with PostgreSQL repository
-	users_module.RegisterRoutes(mux, db)
+	users_module.Register(mux, db)
 
 	server := &http.Server{
 		Addr:         host + ":" + port,
