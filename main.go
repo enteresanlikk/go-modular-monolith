@@ -19,6 +19,8 @@ var requiredEnvVars = []string{
 	"DB_NAME",
 	"DB_SSLMODE",
 	"BCRYPT_COST",
+	"JWT_SECRET",
+	"JWT_REFRESH_SECRET",
 }
 
 func checkRequiredEnvironmentVariables() error {

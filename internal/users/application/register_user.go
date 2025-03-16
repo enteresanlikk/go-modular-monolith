@@ -4,7 +4,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	"golang.org/x/crypto/bcrypt"
@@ -39,13 +38,9 @@ func (s *UserService) Register(req *RegisterUserRequest) (*TokenResponse, error)
 		return nil, err
 	}
 
-	accessToken := "dummy-token"  // TODO: Implement proper JWT token generation
-	refreshToken := "dummy-token" // TODO: Implement proper JWT token generation
-	expiresAt := time.Now().Add(time.Hour * 24).Unix()
+	claims := map[string]interface{}{
+		"userId": user.ID.String(),
+	}
 
-	return &TokenResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		ExpiresAt:    expiresAt,
-	}, nil
+	return s.tokenService.GenerateTokenPair(claims)
 }
