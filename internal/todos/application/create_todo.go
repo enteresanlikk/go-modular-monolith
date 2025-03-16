@@ -1,9 +1,7 @@
 package todos_application
 
 import (
-	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	todos_domain "github.com/enteresanlikk/go-modular-monolith/internal/todos/domain"
-	"github.com/google/uuid"
 )
 
 type CreateTodoRequest struct {
@@ -12,12 +10,9 @@ type CreateTodoRequest struct {
 }
 
 func (s *TodoService) CreateTodo(req *CreateTodoRequest) (*TodoResponse, error) {
-	todo := &todos_domain.Todo{
-		Entity: common_domain.Entity{
-			ID: uuid.New(),
-		},
-		Title:     req.Title,
-		Completed: req.Completed,
+	todo, err := (&todos_domain.Todo{}).Create(req.Title, req.Completed)
+	if err != nil {
+		return nil, err
 	}
 
 	if err := s.repo.Create(todo); err != nil {

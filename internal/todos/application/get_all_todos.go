@@ -10,13 +10,7 @@ func (s *TodoService) GetAllTodos(req *GetAllTodosRequest) ([]*TodoResponse, err
 
 	todosResponse := make([]*TodoResponse, len(todos))
 	for i, todo := range todos {
-		todosResponse[i] = &TodoResponse{
-			ID:        todo.ID,
-			Title:     todo.Title,
-			Completed: todo.Completed,
-			CreatedAt: todo.CreatedAt,
-			UpdatedAt: todo.UpdatedAt,
-		}
+		todosResponse[i] = (&TodoResponse{}).FromTodo(todo)
 	}
 
 	return todosResponse, nil

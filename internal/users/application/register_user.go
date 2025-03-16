@@ -6,9 +6,7 @@ import (
 	"strings"
 	"time"
 
-	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -26,15 +24,15 @@ func (s *UserService) Register(req *RegisterUserRequest) (*TokenResponse, error)
 		return nil, err
 	}
 
-	user := &users_domain.User{
-		Entity: common_domain.Entity{
-			ID: uuid.New(),
-		},
-		FirstName: req.FirstName,
-		LastName:  req.LastName,
-		Username:  strings.ToUpper(req.Email),
-		Email:     req.Email,
-		Password:  string(hashedPassword),
+	user, err := (&users_domain.User{}).Create(
+		req.FirstName,
+		req.LastName,
+		strings.ToUpper(req.Email),
+		req.Email,
+		string(hashedPassword),
+	)
+	if err != nil {
+		return nil, err
 	}
 
 	if err := s.repo.Create(user); err != nil {

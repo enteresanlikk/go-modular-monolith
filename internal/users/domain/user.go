@@ -2,6 +2,7 @@ package users_domain
 
 import (
 	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
+	"github.com/google/uuid"
 )
 
 type User struct {
@@ -16,4 +17,14 @@ type User struct {
 
 func (u *User) TableName() string {
 	return "users.users"
+}
+
+func (u *User) Create(firstName, lastName, username, email, password string) (*User, error) {
+	u.ID = uuid.New()
+	u.FirstName = firstName
+	u.LastName = lastName
+	u.Username = username
+	u.Email = email
+	u.Password = password
+	return u, nil
 }

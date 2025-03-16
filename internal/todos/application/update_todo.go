@@ -14,8 +14,10 @@ func (s *TodoService) UpdateTodo(req *UpdateTodoRequest) (*TodoResponse, error) 
 		return nil, err
 	}
 
-	todo.Title = req.Title
-	todo.Completed = req.Completed
+	todo, err = todo.Update(req.Title, req.Completed)
+	if err != nil {
+		return nil, err
+	}
 
 	if err := s.repo.Update(todo); err != nil {
 		return nil, err
