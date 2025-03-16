@@ -10,6 +10,7 @@ import (
 	"time"
 
 	common_infrastructure "github.com/enteresanlikk/go-modular-monolith/internal/common/infrastructure"
+	todos_module "github.com/enteresanlikk/go-modular-monolith/internal/todos"
 	users_module "github.com/enteresanlikk/go-modular-monolith/internal/users"
 	"github.com/gorilla/mux"
 )
@@ -23,6 +24,7 @@ func Start() {
 	db := common_infrastructure.NewPostgresDB()
 
 	users_module.Register(mux, db)
+	todos_module.Register(mux, db)
 
 	server := &http.Server{
 		Addr:         host + ":" + port,

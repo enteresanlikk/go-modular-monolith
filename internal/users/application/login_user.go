@@ -12,13 +12,7 @@ type LoginUserRequest struct {
 	Password string `json:"password" validate:"required,min=6"`
 }
 
-type LoginResponse struct {
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
-	ExpiresAt    int64  `json:"expiresAt"`
-}
-
-func (s *UserService) Login(req *LoginUserRequest) (*LoginResponse, error) {
+func (s *UserService) Login(req *LoginUserRequest) (*TokenResponse, error) {
 	user, err := s.repo.FindByEmail(req.Email)
 	if err != nil {
 		return nil, users_domain.ErrInvalidCredentials
@@ -32,7 +26,7 @@ func (s *UserService) Login(req *LoginUserRequest) (*LoginResponse, error) {
 	refreshToken := "dummy-token" // TODO: Implement proper JWT token generation
 	expiresAt := time.Now().Add(time.Hour * 24).Unix()
 
-	return &LoginResponse{
+	return &TokenResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		ExpiresAt:    expiresAt,
