@@ -19,12 +19,16 @@ func (u *User) TableName() string {
 	return "users.users"
 }
 
-func (u *User) Create(firstName, lastName, username, email, password string) (*User, error) {
-	u.ID = uuid.New()
-	u.FirstName = firstName
-	u.LastName = lastName
-	u.Username = username
-	u.Email = email
-	u.Password = password
+func NewUser(firstName, lastName, username, email, password string) (*User, error) {
+	u := &User{
+		Entity: common_domain.Entity{
+			ID: uuid.New(),
+		},
+		FirstName: firstName,
+		LastName:  lastName,
+		Username:  username,
+		Email:     email,
+		Password:  password,
+	}
 	return u, nil
 }

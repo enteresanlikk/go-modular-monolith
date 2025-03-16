@@ -10,7 +10,7 @@ type CreateTodoRequest struct {
 }
 
 func (s *TodoService) CreateTodo(req *CreateTodoRequest) (*TodoResponse, error) {
-	todo, err := (&todos_domain.Todo{}).Create(req.Title, req.Completed)
+	todo, err := todos_domain.NewTodo(req.Title, req.Completed)
 	if err != nil {
 		return nil, err
 	}

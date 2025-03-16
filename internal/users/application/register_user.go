@@ -23,7 +23,7 @@ func (s *UserService) Register(req *RegisterUserRequest) (*TokenResponse, error)
 		return nil, err
 	}
 
-	user, err := (&users_domain.User{}).Create(
+	user, err := users_domain.NewUser(
 		req.FirstName,
 		req.LastName,
 		strings.ToUpper(req.Email),

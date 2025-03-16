@@ -16,10 +16,14 @@ func (Todo) TableName() string {
 	return "todos.todos"
 }
 
-func (t *Todo) Create(title string, completed bool) (*Todo, error) {
-	t.ID = uuid.New()
-	t.Title = title
-	t.Completed = completed
+func NewTodo(title string, completed bool) (*Todo, error) {
+	t := &Todo{
+		Entity: common_domain.Entity{
+			ID: uuid.New(),
+		},
+		Title:     title,
+		Completed: completed,
+	}
 	return t, nil
 }
 
