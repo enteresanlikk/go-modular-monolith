@@ -3,18 +3,18 @@ package users
 import (
 	"net/http"
 
-	"github.com/enteresanlikk/go-modular-monolith/internal/users/application"
+	users_application "github.com/enteresanlikk/go-modular-monolith/internal/users/application"
 	users_infrastructure "github.com/enteresanlikk/go-modular-monolith/internal/users/infrastructure"
-	"github.com/enteresanlikk/go-modular-monolith/internal/users/presentation"
+	users_presentation "github.com/enteresanlikk/go-modular-monolith/internal/users/presentation"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
 
 func RegisterRoutes(mux *mux.Router, db *gorm.DB) {
 	userRepo := users_infrastructure.NewUserRepository(db)
-	registerService := application.NewUserService(userRepo)
-	loginService := application.NewUserService(userRepo)
-	handler := presentation.NewAuthHandler(registerService, loginService)
+	registerService := users_application.NewUserService(userRepo)
+	loginService := users_application.NewUserService(userRepo)
+	handler := users_presentation.NewUsersHandler(registerService, loginService)
 
 	authRouter := mux.PathPrefix("/auth").Subrouter()
 

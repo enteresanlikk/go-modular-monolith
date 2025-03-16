@@ -1,11 +1,9 @@
-package users
+package users_domain
 
-import (
-	"github.com/enteresanlikk/go-modular-monolith/internal/common"
-)
+import common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 
 type User struct {
-	common.Entity
+	common_domain.Entity
 
 	FirstName string `json:"first_name" gorm:"not null"`
 	LastName  string `json:"last_name" gorm:"not null"`

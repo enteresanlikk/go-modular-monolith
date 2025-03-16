@@ -1,18 +1,19 @@
-package presentation
+package users_presentation
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/enteresanlikk/go-modular-monolith/internal/common"
-	"github.com/enteresanlikk/go-modular-monolith/internal/users/application"
+	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
+	common_presentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
+	users_application "github.com/enteresanlikk/go-modular-monolith/internal/users/application"
 	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 )
 
-func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	var req application.LoginUserRequest
+func (h *UsersHandler) Login(w http.ResponseWriter, r *http.Request) {
+	var req users_application.LoginUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		common.JsonResponseWithStatus(w, http.StatusBadRequest, common.ErrorDataResult("Invalid request", err))
+		common_presentation.JsonResponseWithStatus(w, http.StatusBadRequest, common_domain.ErrorDataResult("Invalid request", err))
 		return
 	}
 
@@ -22,9 +23,9 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		if err == users_domain.ErrInvalidCredentials {
 			status = http.StatusUnauthorized
 		}
-		common.JsonResponseWithStatus(w, status, common.ErrorDataResult("Failed to login", err))
+		common_presentation.JsonResponseWithStatus(w, status, common_domain.ErrorDataResult("Failed to login", err))
 		return
 	}
 
-	common.JsonResponseWithStatus(w, http.StatusOK, common.SuccessDataResult("User logged in successfully", response))
+	common_presentation.JsonResponseWithStatus(w, http.StatusOK, common_domain.SuccessDataResult("User logged in successfully", response))
 }

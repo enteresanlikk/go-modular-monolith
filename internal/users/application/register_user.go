@@ -1,4 +1,4 @@
-package application
+package users_application
 
 import (
 	"os"
@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	users "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
+	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -26,7 +26,7 @@ type RegisterUserResponse struct {
 
 func (s *UserService) Register(req *RegisterUserRequest) (*RegisterUserResponse, error) {
 	if req.Password != req.ConfirmPassword {
-		return nil, users.ErrPasswordMismatch
+		return nil, users_domain.ErrPasswordMismatch
 	}
 
 	var bcryptCost, _ = strconv.Atoi(os.Getenv("BCRYPT_COST"))
@@ -35,7 +35,7 @@ func (s *UserService) Register(req *RegisterUserRequest) (*RegisterUserResponse,
 		return nil, err
 	}
 
-	user := &users.User{
+	user := &users_domain.User{
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 		Username:  strings.ToUpper(req.Email),

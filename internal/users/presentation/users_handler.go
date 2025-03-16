@@ -1,16 +1,16 @@
-package presentation
+package users_presentation
 
 import (
-	"github.com/enteresanlikk/go-modular-monolith/internal/users/application"
+	users_application "github.com/enteresanlikk/go-modular-monolith/internal/users/application"
 )
 
-type AuthHandler struct {
-	registerService *application.UserService
-	loginService    *application.UserService
+type UsersHandler struct {
+	registerService *users_application.UserService
+	loginService    *users_application.UserService
 }
 
-func NewAuthHandler(registerService *application.UserService, loginService *application.UserService) *AuthHandler {
-	return &AuthHandler{
+func NewUsersHandler(registerService *users_application.UserService, loginService *users_application.UserService) *UsersHandler {
+	return &UsersHandler{
 		registerService: registerService,
 		loginService:    loginService,
 	}

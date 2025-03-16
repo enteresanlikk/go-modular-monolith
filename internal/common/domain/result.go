@@ -1,4 +1,4 @@
-package common
+package common_domain
 
 type result struct {
 	IsSuccess bool        `json:"isSuccess"`

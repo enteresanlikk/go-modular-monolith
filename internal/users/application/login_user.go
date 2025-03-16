@@ -1,9 +1,9 @@
-package application
+package users_application
 
 import (
 	"time"
 
-	users "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
+	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -21,11 +21,11 @@ type LoginResponse struct {
 func (s *UserService) Login(req *LoginUserRequest) (*LoginResponse, error) {
 	user, err := s.repo.FindByEmail(req.Email)
 	if err != nil {
-		return nil, users.ErrInvalidCredentials
+		return nil, users_domain.ErrInvalidCredentials
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		return nil, users.ErrInvalidCredentials
+		return nil, users_domain.ErrInvalidCredentials
 	}
 
 	accessToken := "dummy-token"  // TODO: Implement proper JWT token generation

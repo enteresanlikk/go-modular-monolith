@@ -1,18 +1,19 @@
-package presentation
+package users_presentation
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/enteresanlikk/go-modular-monolith/internal/common"
-	"github.com/enteresanlikk/go-modular-monolith/internal/users/application"
+	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
+	common_presentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
+	users_application "github.com/enteresanlikk/go-modular-monolith/internal/users/application"
 	users_domain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 )
 
-func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
-	var req application.RegisterUserRequest
+func (h *UsersHandler) Register(w http.ResponseWriter, r *http.Request) {
+	var req users_application.RegisterUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		common.JsonResponseWithStatus(w, http.StatusBadRequest, common.ErrorDataResult("Invalid request", err))
+		common_presentation.JsonResponseWithStatus(w, http.StatusBadRequest, common_domain.ErrorDataResult("Invalid request", err))
 		return
 	}
 
@@ -22,9 +23,9 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		if err == users_domain.ErrPasswordMismatch {
 			status = http.StatusBadRequest
 		}
-		common.JsonResponseWithStatus(w, status, common.ErrorDataResult("Failed to register user", err))
+		common_presentation.JsonResponseWithStatus(w, status, common_domain.ErrorDataResult("Failed to register user", err))
 		return
 	}
 
-	common.JsonResponseWithStatus(w, http.StatusCreated, common.SuccessDataResult("User created successfully", response))
+	common_presentation.JsonResponseWithStatus(w, http.StatusCreated, common_domain.SuccessDataResult("User created successfully", response))
 }
