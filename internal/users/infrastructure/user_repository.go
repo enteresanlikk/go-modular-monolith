@@ -16,6 +16,10 @@ func NewUserRepository(db *gorm.DB) users_domain.UserRepository {
 	db.Exec("CREATE SCHEMA IF NOT EXISTS users")
 
 	db.AutoMigrate(&users_domain.User{})
+	db.AutoMigrate(&users_domain.Role{})
+	db.AutoMigrate(&users_domain.Permission{})
+	db.AutoMigrate(&users_domain.RolePermission{})
+	db.AutoMigrate(&users_domain.UserRole{})
 
 	return &UserRepository{
 		db: db,
