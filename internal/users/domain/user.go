@@ -1,0 +1,15 @@
+package users
+
+import (
+	"github.com/enteresanlikk/go-modular-monolith/internal/common"
+)
+
+type User struct {
+	common.Entity
+
+	FirstName string `json:"first_name" gorm:"not null"`
+	LastName  string `json:"last_name" gorm:"not null"`
+	Username  string `json:"username" gorm:"uniqueIndex;not null"`
+	Email     string `json:"email" gorm:"uniqueIndex;not null"`
+	Password  string `json:"-" gorm:"not null"`
+}

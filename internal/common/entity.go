@@ -8,19 +8,19 @@ import (
 )
 
 type Entity struct {
-	ID        uuid.UUID `json:"id" gorm:"primary_key"`
+	ID        uuid.UUID `json:"id" gorm:"type:uuid;primary_key"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
 }
 
 func (e *Entity) BeforeCreate(tx *gorm.DB) (err error) {
 	e.ID = uuid.New()
-	e.CreatedAt = time.Now()
-	e.UpdatedAt = time.Now()
+	e.CreatedAt = time.Now().UTC()
+	e.UpdatedAt = time.Now().UTC()
 	return
 }
 
 func (e *Entity) BeforeUpdate(tx *gorm.DB) (err error) {
-	e.UpdatedAt = time.Now()
+	e.UpdatedAt = time.Now().UTC()
 	return
 }

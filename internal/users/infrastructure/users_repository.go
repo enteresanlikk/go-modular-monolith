@@ -3,7 +3,7 @@ package users
 import (
 	"errors"
 
-	"github.com/enteresanlikk/go-modular-monolith/internal/users/domain/users"
+	users "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )

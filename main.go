@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/enteresanlikk/go-modular-monolith/internal/http_server"
+	"github.com/enteresanlikk/go-modular-monolith/internal/api"
 	"github.com/joho/godotenv"
 )
 
@@ -41,5 +41,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http_server.Start()
+	api.Start()
 }

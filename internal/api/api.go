@@ -1,4 +1,4 @@
-package http_server
+package api
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/enteresanlikk/go-modular-monolith/internal/config"
-	users_presentation "github.com/enteresanlikk/go-modular-monolith/internal/users/presentation"
+	users_module "github.com/enteresanlikk/go-modular-monolith/internal/users"
 	"github.com/gorilla/mux"
 )
 
@@ -24,11 +24,13 @@ func Start() {
 	db := config.NewPostgresDB()
 
 	// Initialize user module with PostgreSQL repository
-	users_presentation.RegisterRoutes(mux, db)
+	users_module.RegisterRoutes(mux, db)
 
 	server := &http.Server{
-		Addr:    host + ":" + port,
-		Handler: mux,
+		Addr:         host + ":" + port,
+		Handler:      mux,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	go func() {

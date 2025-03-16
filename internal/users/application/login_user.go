@@ -1,9 +1,9 @@
-package login_user
+package application
 
 import (
 	"time"
 
-	"github.com/enteresanlikk/go-modular-monolith/internal/users/domain/users"
+	users "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,14 +16,6 @@ type LoginResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 	ExpiresAt    int64  `json:"expires_at"`
-}
-
-type UserService struct {
-	repo users.UserRepository
-}
-
-func NewUserService(repo users.UserRepository) *UserService {
-	return &UserService{repo: repo}
 }
 
 func (s *UserService) Login(req *LoginUserRequest) (*LoginResponse, error) {
