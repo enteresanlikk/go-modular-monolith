@@ -1,4 +1,4 @@
-package users_domain
+package usersDomain
 
 import (
 	"github.com/google/uuid"

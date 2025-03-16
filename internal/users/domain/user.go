@@ -1,12 +1,12 @@
-package users_domain
+package usersDomain
 
 import (
-	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
+	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	"github.com/google/uuid"
 )
 
 type User struct {
-	common_domain.Entity
+	commonDomain.Entity
 
 	FirstName string `json:"firstName" gorm:"not null"`
 	LastName  string `json:"lastName" gorm:"not null"`
@@ -21,7 +21,7 @@ func (u *User) TableName() string {
 
 func NewUser(firstName, lastName, username, email, password string) (*User, error) {
 	u := &User{
-		Entity: common_domain.Entity{
+		Entity: commonDomain.Entity{
 			ID: uuid.New(),
 		},
 		FirstName: firstName,

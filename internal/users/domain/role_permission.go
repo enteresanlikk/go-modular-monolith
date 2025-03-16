@@ -1,12 +1,12 @@
-package users_domain
+package usersDomain
 
 import (
-	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
+	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	"github.com/google/uuid"
 )
 
 type RolePermission struct {
-	common_domain.Entity
+	commonDomain.Entity
 
 	RoleID       string `json:"roleId" gorm:"not null"`
 	PermissionID string `json:"permissionId" gorm:"not null"`
@@ -18,7 +18,7 @@ func (RolePermission) TableName() string {
 
 func NewRolePermission(roleID, permissionID string) (*RolePermission, error) {
 	rp := &RolePermission{
-		Entity: common_domain.Entity{
+		Entity: commonDomain.Entity{
 			ID: uuid.New(),
 		},
 		RoleID:       roleID,

@@ -1,12 +1,12 @@
-package users_domain
+package usersDomain
 
 import (
-	common_domain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
+	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	"github.com/google/uuid"
 )
 
 type UserRole struct {
-	common_domain.Entity
+	commonDomain.Entity
 
 	UserID string `json:"userId" gorm:"not null"`
 	RoleID string `json:"roleId" gorm:"not null"`
@@ -18,7 +18,7 @@ func (UserRole) TableName() string {
 
 func NewUserRole(userID, roleID string) (*UserRole, error) {
 	ur := &UserRole{
-		Entity: common_domain.Entity{
+		Entity: commonDomain.Entity{
 			ID: uuid.New(),
 		},
 		UserID: userID,

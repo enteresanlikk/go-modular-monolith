@@ -9,9 +9,9 @@ import (
 	"syscall"
 	"time"
 
-	common_infrastructure "github.com/enteresanlikk/go-modular-monolith/internal/common/infrastructure"
-	todos_module "github.com/enteresanlikk/go-modular-monolith/internal/todos"
-	users_module "github.com/enteresanlikk/go-modular-monolith/internal/users"
+	commonInfrastructure "github.com/enteresanlikk/go-modular-monolith/internal/common/infrastructure"
+	todosModule "github.com/enteresanlikk/go-modular-monolith/internal/todos"
+	usersModule "github.com/enteresanlikk/go-modular-monolith/internal/users"
 	"github.com/gorilla/mux"
 )
 
@@ -21,10 +21,10 @@ func Start() {
 
 	mux := mux.NewRouter()
 
-	db := common_infrastructure.NewPostgresDB()
+	db := commonInfrastructure.NewPostgresDB()
 
-	users_module.Register(mux, db)
-	todos_module.Register(mux, db)
+	usersModule.Register(mux, db)
+	todosModule.Register(mux, db)
 
 	server := &http.Server{
 		Addr:         host + ":" + port,
