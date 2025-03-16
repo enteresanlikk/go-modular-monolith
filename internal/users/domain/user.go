@@ -11,3 +11,7 @@ type User struct {
 	Email     string `json:"email" gorm:"uniqueIndex;not null"`
 	Password  string `json:"-" gorm:"not null"`
 }
+
+func (u *User) TableName() string {
+	return "users.users"
+}

@@ -8,16 +8,13 @@ import (
 	"gorm.io/gorm"
 )
 
-var (
-	ErrUserNotFound      = errors.New("user not found")
-	ErrEmailAlreadyExist = errors.New("email already exists")
-)
-
 type UserRepository struct {
 	db *gorm.DB
 }
 
 func NewUserRepository(db *gorm.DB) users_domain.UserRepository {
+	// create users schema
+	db.Exec("CREATE SCHEMA IF NOT EXISTS users")
 	// Auto-migrate the users table
 	db.AutoMigrate(&users_domain.User{})
 
@@ -31,7 +28,7 @@ func (r *UserRepository) Create(user *users_domain.User) error {
 	var existingUser users_domain.User
 	result := r.db.Where("email = ?", user.Email).First(&existingUser)
 	if result.Error == nil {
-		return ErrEmailAlreadyExist
+		return users_domain.ErrEmailAlreadyExist
 	} else if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return result.Error
 	}
@@ -50,7 +47,7 @@ func (r *UserRepository) FindByEmail(email string) (*users_domain.User, error) {
 	result := r.db.Where("email = ?", email).First(&user)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, ErrUserNotFound
+			return nil, users_domain.ErrUserNotFound
 		}
 		return nil, result.Error
 	}
@@ -63,7 +60,7 @@ func (r *UserRepository) FindByID(id uuid.UUID) (*users_domain.User, error) {
 	result := r.db.First(&user, "id = ?", id)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, ErrUserNotFound
+			return nil, users_domain.ErrUserNotFound
 		}
 		return nil, result.Error
 	}
