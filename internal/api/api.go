@@ -19,9 +19,18 @@ func Start() {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 
+	postgresConfig := &commonInfrastructure.PostgresDBConfig{
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		User:     os.Getenv("DB_USER"),
+		Password: os.Getenv("DB_PASSWORD"),
+		DBName:   os.Getenv("DB_NAME"),
+		SSLMode:  os.Getenv("DB_SSLMODE"),
+	}
+
 	r := router.New()
 
-	db := commonInfrastructure.NewPostgresDB()
+	db := commonInfrastructure.NewPostgresDB(postgresConfig)
 
 	usersModule.Register(r, db)
 	todosModule.Register(r, db)
