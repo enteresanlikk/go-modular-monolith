@@ -20,8 +20,8 @@ func Register(r *router.Router, db *gorm.DB) {
 	todosGroup := r.Group("/todos")
 
 	todosGroup.GET("/", handler.GetAllTodos)
-	todosGroup.GET("/:id", handler.GetTodoById)
+	todosGroup.GET("/{id}", handler.GetTodoById)
 	todosGroup.POST("/", handler.CreateTodo)
-	todosGroup.PUT("/:id", handler.UpdateTodo)
-	todosGroup.DELETE("/:id", handler.DeleteTodo)
+	todosGroup.PUT("/{id}", handler.UpdateTodo)
+	todosGroup.DELETE("/{id}", handler.DeleteTodo)
 }
