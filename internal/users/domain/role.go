@@ -6,7 +6,7 @@ import (
 )
 
 type Role struct {
-	commonDomain.Entity
+	commonDomain.BaseEntity
 
 	Name string `json:"name" gorm:"not null"`
 }
@@ -17,7 +17,7 @@ func (Role) TableName() string {
 
 func NewRole(name string) (*Role, error) {
 	r := &Role{
-		Entity: commonDomain.Entity{
+		BaseEntity: commonDomain.BaseEntity{
 			ID: uuid.New(),
 		},
 		Name: name,

@@ -1,12 +1,14 @@
 package usersApplication
 
 import (
+	"errors"
 	"os"
 	"strconv"
 	"strings"
 
 	usersDomain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type RegisterUserRequest struct {
@@ -17,6 +19,15 @@ type RegisterUserRequest struct {
 }
 
 func (s *UserService) Register(req *RegisterUserRequest) (*TokenResponse, error) {
+	findedUser, err := s.repo.FindByEmail(req.Email)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+
+	if findedUser != nil {
+		return nil, usersDomain.ErrEmailAlreadyExist
+	}
+
 	var bcryptCost, _ = strconv.Atoi(os.Getenv("BCRYPT_COST"))
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcryptCost)
 	if err != nil {

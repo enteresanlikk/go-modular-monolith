@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	commonDomain.Entity
+	commonDomain.BaseEntity
 
 	FirstName string `json:"firstName" gorm:"not null"`
 	LastName  string `json:"lastName" gorm:"not null"`
@@ -21,7 +21,7 @@ func (u *User) TableName() string {
 
 func NewUser(firstName, lastName, username, email, password string) (*User, error) {
 	u := &User{
-		Entity: commonDomain.Entity{
+		BaseEntity: commonDomain.BaseEntity{
 			ID: uuid.New(),
 		},
 		FirstName: firstName,

@@ -7,5 +7,10 @@ type DeleteTodoRequest struct {
 }
 
 func (s *TodoService) DeleteTodo(req *DeleteTodoRequest) error {
-	return s.repo.Delete(req.ID)
+	todo, err := s.repo.FindByID(req.ID)
+	if err != nil {
+		return err
+	}
+
+	return s.repo.Delete(todo.ID)
 }

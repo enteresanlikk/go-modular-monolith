@@ -1,8 +1,6 @@
 package usersInfrastructure
 
 import (
-	"errors"
-
 	usersDomain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -27,44 +25,17 @@ func NewUserRepository(db *gorm.DB) usersDomain.UserRepository {
 }
 
 func (r *UserRepository) Create(user *usersDomain.User) error {
-	var existingUser usersDomain.User
-	result := r.db.Where("email = ?", user.Email).First(&existingUser)
-	if result.Error == nil {
-		return usersDomain.ErrEmailAlreadyExist
-	} else if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return result.Error
-	}
-
-	result = r.db.Create(user)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	return nil
+	return r.db.Create(user).Error
 }
 
 func (r *UserRepository) FindByEmail(email string) (*usersDomain.User, error) {
 	var user usersDomain.User
 	result := r.db.Where("email = ?", email).First(&user)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, usersDomain.ErrUserNotFound
-		}
-		return nil, result.Error
-	}
-
-	return &user, nil
+	return &user, result.Error
 }
 
 func (r *UserRepository) FindByID(id uuid.UUID) (*usersDomain.User, error) {
 	var user usersDomain.User
-	result := r.db.First(&user, "id = ?", id)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, usersDomain.ErrUserNotFound
-		}
-		return nil, result.Error
-	}
-
-	return &user, nil
+	result := r.db.Where("id = ?", id).First(&user)
+	return &user, result.Error
 }

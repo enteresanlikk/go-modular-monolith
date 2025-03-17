@@ -6,7 +6,7 @@ import (
 )
 
 type Permission struct {
-	commonDomain.Entity
+	commonDomain.BaseEntity
 
 	Name string `json:"name" gorm:"not null"`
 }
@@ -17,7 +17,7 @@ func (Permission) TableName() string {
 
 func NewPermission(name string) (*Permission, error) {
 	p := &Permission{
-		Entity: commonDomain.Entity{
+		BaseEntity: commonDomain.BaseEntity{
 			ID: uuid.New(),
 		},
 		Name: name,

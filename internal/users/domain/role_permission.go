@@ -6,7 +6,7 @@ import (
 )
 
 type RolePermission struct {
-	commonDomain.Entity
+	commonDomain.BaseEntity
 
 	RoleID       string `json:"roleId" gorm:"not null"`
 	PermissionID string `json:"permissionId" gorm:"not null"`
@@ -18,7 +18,7 @@ func (RolePermission) TableName() string {
 
 func NewRolePermission(roleID, permissionID string) (*RolePermission, error) {
 	rp := &RolePermission{
-		Entity: commonDomain.Entity{
+		BaseEntity: commonDomain.BaseEntity{
 			ID: uuid.New(),
 		},
 		RoleID:       roleID,

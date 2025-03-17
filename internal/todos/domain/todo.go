@@ -6,7 +6,7 @@ import (
 )
 
 type Todo struct {
-	commonDomain.Entity
+	commonDomain.BaseEntity
 
 	Title     string `json:"title" gorm:"not null"`
 	Completed bool   `json:"completed" gorm:"not null"`
@@ -18,7 +18,7 @@ func (Todo) TableName() string {
 
 func NewTodo(title string, completed bool) (*Todo, error) {
 	t := &Todo{
-		Entity: commonDomain.Entity{
+		BaseEntity: commonDomain.BaseEntity{
 			ID: uuid.New(),
 		},
 		Title:     title,
