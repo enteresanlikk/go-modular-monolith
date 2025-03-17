@@ -1,7 +1,6 @@
 package users
 
 import (
-	"net/http"
 	"os"
 	"time"
 
@@ -9,11 +8,11 @@ import (
 	usersDomain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	usersInfrastructure "github.com/enteresanlikk/go-modular-monolith/internal/users/infrastructure"
 	usersPresentation "github.com/enteresanlikk/go-modular-monolith/internal/users/presentation"
-	"github.com/gorilla/mux"
+	"github.com/fasthttp/router"
 	"gorm.io/gorm"
 )
 
-func Register(mux *mux.Router, db *gorm.DB) {
+func Register(r *router.Router, db *gorm.DB) {
 	userRepo := usersInfrastructure.NewUserRepository(db)
 
 	tokenConfig := usersDomain.TokenConfig{
@@ -29,7 +28,7 @@ func Register(mux *mux.Router, db *gorm.DB) {
 
 	handler := usersPresentation.NewUsersHandler(registerService, loginService)
 
-	authRouter := mux.PathPrefix("/auth").Subrouter()
-	authRouter.HandleFunc("/register", handler.Register).Methods(http.MethodPost)
-	authRouter.HandleFunc("/login", handler.Login).Methods(http.MethodPost)
+	authGroup := r.Group("/auth")
+	authGroup.POST("/register", handler.Register)
+	authGroup.POST("/login", handler.Login)
 }

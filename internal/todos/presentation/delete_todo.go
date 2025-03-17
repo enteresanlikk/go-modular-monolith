@@ -1,26 +1,31 @@
 package todosPresentation
 
 import (
-	"net/http"
-
 	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	commonPresentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
 	todosApplication "github.com/enteresanlikk/go-modular-monolith/internal/todos/application"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
+	"github.com/valyala/fasthttp"
 )
 
-func (s *TodosHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
-	req := todosApplication.DeleteTodoRequest{
-		ID: uuid.MustParse(mux.Vars(r)["id"]),
-	}
-
-	err := s.deleteTodoService.DeleteTodo(&req)
+func (s *TodosHandler) DeleteTodo(ctx *fasthttp.RequestCtx) {
+	idParam := ctx.UserValue("id").(string)
+	id, err := uuid.Parse(idParam)
 	if err != nil {
-		status := http.StatusInternalServerError
-		commonPresentation.JsonResponseWithStatus(w, status, commonDomain.ErrorResult(err.Error()))
+		commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusBadRequest, commonDomain.ErrorResult("invalid id format"))
 		return
 	}
 
-	commonPresentation.JsonResponseWithStatus(w, http.StatusOK, commonDomain.SuccessResult("todo_deleted_successfully"))
+	req := todosApplication.DeleteTodoRequest{
+		ID: id,
+	}
+
+	err = s.deleteTodoService.DeleteTodo(&req)
+	if err != nil {
+		status := fasthttp.StatusInternalServerError
+		commonPresentation.JsonResponseWithStatus(ctx, status, commonDomain.ErrorResult(err.Error()))
+		return
+	}
+
+	commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusOK, commonDomain.SuccessResult("todo_deleted_successfully"))
 }

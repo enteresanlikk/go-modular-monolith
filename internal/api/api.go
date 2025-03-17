@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -12,30 +11,30 @@ import (
 	commonInfrastructure "github.com/enteresanlikk/go-modular-monolith/internal/common/infrastructure"
 	todosModule "github.com/enteresanlikk/go-modular-monolith/internal/todos"
 	usersModule "github.com/enteresanlikk/go-modular-monolith/internal/users"
-	"github.com/gorilla/mux"
+	"github.com/fasthttp/router"
+	"github.com/valyala/fasthttp"
 )
 
 func Start() {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 
-	mux := mux.NewRouter()
+	r := router.New()
 
 	db := commonInfrastructure.NewPostgresDB()
 
-	usersModule.Register(mux, db)
-	todosModule.Register(mux, db)
+	usersModule.Register(r, db)
+	todosModule.Register(r, db)
 
-	server := &http.Server{
-		Addr:         host + ":" + port,
-		Handler:      mux,
+	server := &fasthttp.Server{
+		Handler:      r.Handler,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
 
 	go func() {
 		log.Printf("Server starting on http://%s:%s", host, port)
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := server.ListenAndServe(host + ":" + port); err != nil {
 			log.Fatalf("HTTP server error: %v", err)
 		}
 		log.Println("Stopped serving new connections.")
@@ -45,10 +44,10 @@ func Start() {
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 	<-sigChan
 
-	shutdownCtx, shutdownRelease := context.WithTimeout(context.Background(), 10*time.Second)
+	_, shutdownRelease := context.WithTimeout(context.Background(), 10*time.Second)
 	defer shutdownRelease()
 
-	if err := server.Shutdown(shutdownCtx); err != nil {
+	if err := server.Shutdown(); err != nil {
 		log.Fatalf("HTTP shutdown error: %v", err)
 	}
 	log.Println("Graceful shutdown complete.")

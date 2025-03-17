@@ -2,30 +2,26 @@ package usersPresentation
 
 import (
 	"encoding/json"
-	"net/http"
 
 	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	commonPresentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
 	usersApplication "github.com/enteresanlikk/go-modular-monolith/internal/users/application"
-	usersDomain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
+	"github.com/valyala/fasthttp"
 )
 
-func (h *UsersHandler) Login(w http.ResponseWriter, r *http.Request) {
+func (h *UsersHandler) Login(ctx *fasthttp.RequestCtx) {
 	var req usersApplication.LoginUserRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		commonPresentation.JsonResponseWithStatus(w, http.StatusBadRequest, commonDomain.ErrorResult(err.Error()))
+	if err := json.Unmarshal(ctx.PostBody(), &req); err != nil {
+		commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusBadRequest, commonDomain.ErrorResult(err.Error()))
 		return
 	}
 
 	response, err := h.loginService.Login(&req)
 	if err != nil {
-		status := http.StatusInternalServerError
-		if err == usersDomain.ErrInvalidCredentials {
-			status = http.StatusUnauthorized
-		}
-		commonPresentation.JsonResponseWithStatus(w, status, commonDomain.ErrorResult(err.Error()))
+		status := fasthttp.StatusBadRequest
+		commonPresentation.JsonResponseWithStatus(ctx, status, commonDomain.ErrorResult(err.Error()))
 		return
 	}
 
-	commonPresentation.JsonResponseWithStatus(w, http.StatusOK, commonDomain.SuccessDataResult("user_logged_in_successfully", response))
+	commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusOK, commonDomain.SuccessDataResult("user_logged_in_successfully", response))
 }

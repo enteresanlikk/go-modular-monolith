@@ -2,28 +2,29 @@ package commonPresentation
 
 import (
 	"encoding/json"
-	"net/http"
+
+	"github.com/valyala/fasthttp"
 )
 
-func SetJsonResponseHeader(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "application/json")
+func SetJsonResponseHeader(ctx *fasthttp.RequestCtx) {
+	ctx.SetContentType("application/json")
 }
 
-func SetResponseStatus(w http.ResponseWriter, status int) {
-	w.WriteHeader(status)
+func SetResponseStatus(ctx *fasthttp.RequestCtx, status int) {
+	ctx.SetStatusCode(status)
 }
 
-func SetJsonResponseBody(w http.ResponseWriter, data interface{}) {
-	json.NewEncoder(w).Encode(data)
+func SetJsonResponseBody(ctx *fasthttp.RequestCtx, data interface{}) error {
+	return json.NewEncoder(ctx).Encode(data)
 }
 
-func JsonResponse(w http.ResponseWriter, data interface{}) {
-	SetJsonResponseHeader(w)
-	SetJsonResponseBody(w, data)
+func JsonResponse(ctx *fasthttp.RequestCtx, data interface{}) error {
+	SetJsonResponseHeader(ctx)
+	return SetJsonResponseBody(ctx, data)
 }
 
-func JsonResponseWithStatus(w http.ResponseWriter, status int, data interface{}) {
-	SetJsonResponseHeader(w)
-	SetResponseStatus(w, status)
-	SetJsonResponseBody(w, data)
+func JsonResponseWithStatus(ctx *fasthttp.RequestCtx, status int, data interface{}) error {
+	SetJsonResponseHeader(ctx)
+	SetResponseStatus(ctx, status)
+	return SetJsonResponseBody(ctx, data)
 }

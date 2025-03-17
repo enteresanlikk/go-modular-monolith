@@ -1,26 +1,31 @@
 package todosPresentation
 
 import (
-	"net/http"
-
 	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	commonPresentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
 	todosApplication "github.com/enteresanlikk/go-modular-monolith/internal/todos/application"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
+	"github.com/valyala/fasthttp"
 )
 
-func (s *TodosHandler) GetTodoById(w http.ResponseWriter, r *http.Request) {
+func (s *TodosHandler) GetTodoById(ctx *fasthttp.RequestCtx) {
+	idParam := ctx.UserValue("id").(string)
+	id, err := uuid.Parse(idParam)
+	if err != nil {
+		commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusBadRequest, commonDomain.ErrorResult("invalid id format"))
+		return
+	}
+
 	req := todosApplication.GetTodoByIdRequest{
-		ID: uuid.MustParse(mux.Vars(r)["id"]),
+		ID: id,
 	}
 
 	response, err := s.getTodoByIdService.GetTodoById(&req)
 	if err != nil {
-		status := http.StatusInternalServerError
-		commonPresentation.JsonResponseWithStatus(w, status, commonDomain.ErrorResult(err.Error()))
+		status := fasthttp.StatusInternalServerError
+		commonPresentation.JsonResponseWithStatus(ctx, status, commonDomain.ErrorResult(err.Error()))
 		return
 	}
 
-	commonPresentation.JsonResponseWithStatus(w, http.StatusOK, commonDomain.SuccessDataResult("todo_fetched_successfully", response))
+	commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusOK, commonDomain.SuccessDataResult("todo_fetched_successfully", response))
 }

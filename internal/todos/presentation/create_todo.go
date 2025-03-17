@@ -2,26 +2,26 @@ package todosPresentation
 
 import (
 	"encoding/json"
-	"net/http"
 
 	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	commonPresentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
 	todosApplication "github.com/enteresanlikk/go-modular-monolith/internal/todos/application"
+	"github.com/valyala/fasthttp"
 )
 
-func (s *TodosHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
+func (s *TodosHandler) CreateTodo(ctx *fasthttp.RequestCtx) {
 	var req todosApplication.CreateTodoRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		commonPresentation.JsonResponseWithStatus(w, http.StatusBadRequest, commonDomain.ErrorResult(err.Error()))
+	if err := json.Unmarshal(ctx.PostBody(), &req); err != nil {
+		commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusBadRequest, commonDomain.ErrorResult(err.Error()))
 		return
 	}
 
 	response, err := s.createTodoService.CreateTodo(&req)
 	if err != nil {
-		status := http.StatusInternalServerError
-		commonPresentation.JsonResponseWithStatus(w, status, commonDomain.ErrorResult(err.Error()))
+		status := fasthttp.StatusInternalServerError
+		commonPresentation.JsonResponseWithStatus(ctx, status, commonDomain.ErrorResult(err.Error()))
 		return
 	}
 
-	commonPresentation.JsonResponseWithStatus(w, http.StatusOK, commonDomain.SuccessDataResult("todo_created_successfully", response))
+	commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusOK, commonDomain.SuccessDataResult("todo_created_successfully", response))
 }
