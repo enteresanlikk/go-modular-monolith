@@ -1,7 +1,6 @@
 package commonInfrastructure
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -19,10 +18,7 @@ type PostgresDBConfig struct {
 }
 
 func NewPostgresDB(config *PostgresDBConfig) *gorm.DB {
-	dsn := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		config.Host, config.Port, config.User, config.Password, config.DBName, config.SSLMode,
-	)
+	dsn := "host=" + config.Host + " port=" + config.Port + " user=" + config.User + " password=" + config.Password + " dbname=" + config.DBName + " sslmode=" + config.SSLMode
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		NowFunc: func() time.Time {

@@ -1,7 +1,7 @@
 package usersInfrastructure
 
 import (
-	"fmt"
+	"errors"
 	"time"
 
 	usersDomain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
@@ -35,7 +35,7 @@ func (s *tokenService) GenerateTokenPair(claims map[string]interface{}) (*usersD
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenClaims)
 	accessTokenString, err := accessToken.SignedString(s.config.AccessTokenSecret)
 	if err != nil {
-		return nil, fmt.Errorf("failed to sign access token: %w", err)
+		return nil, errors.Join(errors.New("failed to sign access token"), err)
 	}
 
 	refreshTokenClaims := &usersDomain.TokenClaims{
@@ -50,7 +50,7 @@ func (s *tokenService) GenerateTokenPair(claims map[string]interface{}) (*usersD
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshTokenClaims)
 	refreshTokenString, err := refreshToken.SignedString(s.config.RefreshTokenSecret)
 	if err != nil {
-		return nil, fmt.Errorf("failed to sign refresh token: %w", err)
+		return nil, errors.Join(errors.New("failed to sign refresh token"), err)
 	}
 
 	return &usersDomain.TokenPair{
@@ -68,20 +68,20 @@ func (s *tokenService) ValidateToken(tokenString string, tokenType usersDomain.T
 
 	token, err := jwt.ParseWithClaims(tokenString, &usersDomain.TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			return nil, errors.New("unexpected signing method: " + token.Header["alg"].(string))
 		}
 		return secret, nil
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse token: %w", err)
+		return nil, errors.Join(errors.New("failed to parse token"), err)
 	}
 
 	if claims, ok := token.Claims.(*usersDomain.TokenClaims); ok && token.Valid {
 		return claims, nil
 	}
 
-	return nil, fmt.Errorf("invalid token")
+	return nil, errors.New("invalid token")
 }
 
 func (s *tokenService) ParseToken(tokenString string) (*usersDomain.TokenClaims, error) {

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"errors"
 	"log"
 	"os"
 
@@ -26,7 +26,7 @@ var requiredEnvVars = []string{
 func checkRequiredEnvironmentVariables() error {
 	for _, envVar := range requiredEnvVars {
 		if os.Getenv(envVar) == "" {
-			return fmt.Errorf("%s is not set", envVar)
+			return errors.New(envVar + " is not set")
 		}
 	}
 	return nil
