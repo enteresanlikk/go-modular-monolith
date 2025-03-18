@@ -1,7 +1,7 @@
 package usersPresentation
 
 import (
-	"encoding/json"
+	"github.com/goccy/go-json"
 
 	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	commonPresentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
