@@ -20,11 +20,13 @@ type RegisterUserRequest struct {
 
 func (s *UserService) Register(req *RegisterUserRequest) (*TokenResponse, error) {
 	findedUser, err := s.repo.FindByEmail(req.Email)
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	hasRecordNotFound := errors.Is(err, gorm.ErrRecordNotFound)
+	hasUser := findedUser != nil && !hasRecordNotFound
+	if err != nil && !hasRecordNotFound {
 		return nil, err
 	}
 
-	if findedUser != nil {
+	if hasUser {
 		return nil, usersDomain.ErrEmailAlreadyExist
 	}
 
