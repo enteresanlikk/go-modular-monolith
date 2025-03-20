@@ -1,4 +1,4 @@
-package api
+package main
 
 import (
 	"context"
@@ -12,10 +12,16 @@ import (
 	todosModule "github.com/enteresanlikk/go-modular-monolith/internal/todos"
 	usersModule "github.com/enteresanlikk/go-modular-monolith/internal/users"
 	"github.com/fasthttp/router"
+	"github.com/joho/godotenv"
 	"github.com/valyala/fasthttp"
 )
 
-func Start() {
+func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 
