@@ -4,11 +4,11 @@ import (
 	todosApplication "github.com/enteresanlikk/go-modular-monolith/internal/todos/application"
 	todosInfrastructure "github.com/enteresanlikk/go-modular-monolith/internal/todos/infrastructure"
 	todosPresentation "github.com/enteresanlikk/go-modular-monolith/internal/todos/presentation"
-	"github.com/fasthttp/router"
+	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
-func Register(r *router.Router, db *gorm.DB) {
+func Register(r *fiber.App, db *gorm.DB) {
 	todoRepo := todosInfrastructure.NewTodoRepository(db)
 	createTodoService := todosApplication.NewTodoService(todoRepo)
 	getAllTodosService := todosApplication.NewTodoService(todoRepo)
@@ -19,9 +19,9 @@ func Register(r *router.Router, db *gorm.DB) {
 
 	todosGroup := r.Group("/todos")
 
-	todosGroup.GET("/", handler.GetAllTodos)
-	todosGroup.GET("/{id}", handler.GetTodoById)
-	todosGroup.POST("/", handler.CreateTodo)
-	todosGroup.PUT("/{id}", handler.UpdateTodo)
-	todosGroup.DELETE("/{id}", handler.DeleteTodo)
+	todosGroup.Get("/", handler.GetAllTodos)
+	todosGroup.Get("/:id", handler.GetTodoById)
+	todosGroup.Post("/", handler.CreateTodo)
+	todosGroup.Put("/:id", handler.UpdateTodo)
+	todosGroup.Delete("/:id", handler.DeleteTodo)
 }

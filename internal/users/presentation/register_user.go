@@ -1,27 +1,26 @@
 package usersPresentation
 
 import (
-	"github.com/goccy/go-json"
+	"github.com/gofiber/fiber/v2"
 
 	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	commonPresentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
 	usersApplication "github.com/enteresanlikk/go-modular-monolith/internal/users/application"
-	"github.com/valyala/fasthttp"
 )
 
-func (h *UsersHandler) Register(ctx *fasthttp.RequestCtx) {
+func (h *UsersHandler) Register(ctx *fiber.Ctx) error {
 	var req usersApplication.RegisterUserRequest
-	if err := json.Unmarshal(ctx.PostBody(), &req); err != nil {
-		commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusBadRequest, commonDomain.ErrorResult(err.Error()))
-		return
+	if err := ctx.BodyParser(&req); err != nil {
+		commonPresentation.JsonResponseWithStatus(ctx, fiber.StatusBadRequest, commonDomain.ErrorResult(err.Error()))
+		return nil
 	}
 
 	response, err := h.registerService.Register(&req)
 	if err != nil {
-		status := fasthttp.StatusBadRequest
-		commonPresentation.JsonResponseWithStatus(ctx, status, commonDomain.ErrorResult(err.Error()))
-		return
+		commonPresentation.JsonResponseWithStatus(ctx, fiber.StatusBadRequest, commonDomain.ErrorResult(err.Error()))
+		return nil
 	}
 
-	commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusCreated, commonDomain.SuccessDataResult("user_registered_successfully", response))
+	commonPresentation.JsonResponseWithStatus(ctx, fiber.StatusCreated, commonDomain.SuccessDataResult("user_registered_successfully", response))
+	return nil
 }

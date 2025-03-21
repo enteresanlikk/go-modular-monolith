@@ -1,27 +1,26 @@
 package todosPresentation
 
 import (
-	"github.com/goccy/go-json"
+	"github.com/gofiber/fiber/v2"
 
 	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	commonPresentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
 	todosApplication "github.com/enteresanlikk/go-modular-monolith/internal/todos/application"
-	"github.com/valyala/fasthttp"
 )
 
-func (s *TodosHandler) CreateTodo(ctx *fasthttp.RequestCtx) {
+func (s *TodosHandler) CreateTodo(ctx *fiber.Ctx) error {
 	var req todosApplication.CreateTodoRequest
-	if err := json.Unmarshal(ctx.PostBody(), &req); err != nil {
-		commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusBadRequest, commonDomain.ErrorResult(err.Error()))
-		return
+	if err := ctx.BodyParser(&req); err != nil {
+		commonPresentation.JsonResponseWithStatus(ctx, fiber.StatusBadRequest, commonDomain.ErrorResult(err.Error()))
+		return nil
 	}
 
 	response, err := s.createTodoService.CreateTodo(&req)
 	if err != nil {
-		status := fasthttp.StatusInternalServerError
-		commonPresentation.JsonResponseWithStatus(ctx, status, commonDomain.ErrorResult(err.Error()))
-		return
+		commonPresentation.JsonResponseWithStatus(ctx, fiber.StatusInternalServerError, commonDomain.ErrorResult(err.Error()))
+		return nil
 	}
 
-	commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusOK, commonDomain.SuccessDataResult("todo_created_successfully", response))
+	commonPresentation.JsonResponseWithStatus(ctx, fiber.StatusOK, commonDomain.SuccessDataResult("todo_created_successfully", response))
+	return nil
 }

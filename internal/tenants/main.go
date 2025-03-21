@@ -4,11 +4,11 @@ import (
 	tenantsApplication "github.com/enteresanlikk/go-modular-monolith/internal/tenants/application"
 	tenantsInfrastructure "github.com/enteresanlikk/go-modular-monolith/internal/tenants/infrastructure"
 	tenantsPresentation "github.com/enteresanlikk/go-modular-monolith/internal/tenants/presentation"
-	"github.com/fasthttp/router"
+	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
-func Register(r *router.Router, db *gorm.DB) {
+func Register(r *fiber.App, db *gorm.DB) {
 	tenantRepo := tenantsInfrastructure.NewTenantRepository(db)
 
 	createTenantService := tenantsApplication.NewTenantService(tenantRepo)
@@ -22,9 +22,9 @@ func Register(r *router.Router, db *gorm.DB) {
 
 	tenantsGroup := r.Group("/tenants")
 
-	tenantsGroup.GET("/", handler.GetAllTenants)
-	tenantsGroup.GET("/{id}", handler.GetTenantById)
-	tenantsGroup.POST("/", handler.CreateTenant)
-	tenantsGroup.PUT("/{id}", handler.UpdateTenant)
-	tenantsGroup.DELETE("/{id}", handler.DeleteTenant)
+	tenantsGroup.Get("/", handler.GetAllTenants)
+	tenantsGroup.Get("/:id", handler.GetTenantById)
+	tenantsGroup.Post("/", handler.CreateTenant)
+	tenantsGroup.Put("/:id", handler.UpdateTenant)
+	tenantsGroup.Delete("/:id", handler.DeleteTenant)
 }

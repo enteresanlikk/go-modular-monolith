@@ -4,16 +4,16 @@ import (
 	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	commonPresentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
 	todosApplication "github.com/enteresanlikk/go-modular-monolith/internal/todos/application"
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"github.com/valyala/fasthttp"
 )
 
-func (s *TodosHandler) GetTodoById(ctx *fasthttp.RequestCtx) {
-	idParam := ctx.UserValue("id").(string)
+func (s *TodosHandler) GetTodoById(ctx *fiber.Ctx) error {
+	idParam := ctx.Params("id")
 	id, err := uuid.Parse(idParam)
 	if err != nil {
-		commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusBadRequest, commonDomain.ErrorResult("invalid id format"))
-		return
+		commonPresentation.JsonResponseWithStatus(ctx, fiber.StatusBadRequest, commonDomain.ErrorResult("invalid id format"))
+		return nil
 	}
 
 	req := todosApplication.GetTodoByIdRequest{
@@ -22,10 +22,10 @@ func (s *TodosHandler) GetTodoById(ctx *fasthttp.RequestCtx) {
 
 	response, err := s.getTodoByIdService.GetTodoById(&req)
 	if err != nil {
-		status := fasthttp.StatusInternalServerError
-		commonPresentation.JsonResponseWithStatus(ctx, status, commonDomain.ErrorResult(err.Error()))
-		return
+		commonPresentation.JsonResponseWithStatus(ctx, fiber.StatusInternalServerError, commonDomain.ErrorResult(err.Error()))
+		return nil
 	}
 
-	commonPresentation.JsonResponseWithStatus(ctx, fasthttp.StatusOK, commonDomain.SuccessDataResult("todo_fetched_successfully", response))
+	commonPresentation.JsonResponseWithStatus(ctx, fiber.StatusOK, commonDomain.SuccessDataResult("todo_fetched_successfully", response))
+	return nil
 }

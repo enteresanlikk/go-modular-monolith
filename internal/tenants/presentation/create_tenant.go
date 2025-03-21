@@ -4,23 +4,22 @@ import (
 	commonDomain "github.com/enteresanlikk/go-modular-monolith/internal/common/domain"
 	commonPresentation "github.com/enteresanlikk/go-modular-monolith/internal/common/presentation"
 	tenantsApplication "github.com/enteresanlikk/go-modular-monolith/internal/tenants/application"
-	"github.com/goccy/go-json"
-
-	"github.com/valyala/fasthttp"
+	"github.com/gofiber/fiber/v2"
 )
 
-func (h *TenantsHandler) CreateTenant(c *fasthttp.RequestCtx) {
+func (h *TenantsHandler) CreateTenant(c *fiber.Ctx) error {
 	var req tenantsApplication.CreateTenantRequest
-	if err := json.Unmarshal(c.PostBody(), &req); err != nil {
-		commonPresentation.JsonResponseWithStatus(c, fasthttp.StatusBadRequest, commonDomain.ErrorResult(err.Error()))
-		return
+	if err := c.BodyParser(&req); err != nil {
+		commonPresentation.JsonResponseWithStatus(c, fiber.StatusBadRequest, commonDomain.ErrorResult(err.Error()))
+		return nil
 	}
 
 	response, err := h.createTenantService.CreateTenant(&req)
 	if err != nil {
-		commonPresentation.JsonResponseWithStatus(c, fasthttp.StatusInternalServerError, commonDomain.ErrorResult(err.Error()))
-		return
+		commonPresentation.JsonResponseWithStatus(c, fiber.StatusInternalServerError, commonDomain.ErrorResult(err.Error()))
+		return nil
 	}
 
-	commonPresentation.JsonResponseWithStatus(c, fasthttp.StatusOK, commonDomain.SuccessDataResult("tenant_created_successfully", response))
+	commonPresentation.JsonResponseWithStatus(c, fiber.StatusOK, commonDomain.SuccessDataResult("tenant_created_successfully", response))
+	return nil
 }

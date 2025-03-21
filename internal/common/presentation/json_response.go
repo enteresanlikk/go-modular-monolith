@@ -1,29 +1,27 @@
 package commonPresentation
 
 import (
-	"github.com/goccy/go-json"
-
-	"github.com/valyala/fasthttp"
+	"github.com/gofiber/fiber/v2"
 )
 
-func SetJsonResponseHeader(ctx *fasthttp.RequestCtx) {
-	ctx.SetContentType("application/json")
+func SetJsonResponseHeader(ctx *fiber.Ctx) {
+	ctx.Set("Content-Type", "application/json")
 }
 
-func SetResponseStatus(ctx *fasthttp.RequestCtx, status int) {
-	ctx.SetStatusCode(status)
+func SetResponseStatus(ctx *fiber.Ctx, status int) {
+	ctx.Status(status)
 }
 
-func SetJsonResponseBody(ctx *fasthttp.RequestCtx, data interface{}) error {
-	return json.NewEncoder(ctx).Encode(data)
+func SetJsonResponseBody(ctx *fiber.Ctx, data interface{}) error {
+	return ctx.JSON(data)
 }
 
-func JsonResponse(ctx *fasthttp.RequestCtx, data interface{}) error {
+func JsonResponse(ctx *fiber.Ctx, data interface{}) error {
 	SetJsonResponseHeader(ctx)
 	return SetJsonResponseBody(ctx, data)
 }
 
-func JsonResponseWithStatus(ctx *fasthttp.RequestCtx, status int, data interface{}) error {
+func JsonResponseWithStatus(ctx *fiber.Ctx, status int, data interface{}) error {
 	SetJsonResponseHeader(ctx)
 	SetResponseStatus(ctx, status)
 	return SetJsonResponseBody(ctx, data)

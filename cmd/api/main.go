@@ -12,9 +12,9 @@ import (
 	tenantsModule "github.com/enteresanlikk/go-modular-monolith/internal/tenants"
 	todosModule "github.com/enteresanlikk/go-modular-monolith/internal/todos"
 	usersModule "github.com/enteresanlikk/go-modular-monolith/internal/users"
-	"github.com/fasthttp/router"
+	"github.com/goccy/go-json"
+	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
-	"github.com/valyala/fasthttp"
 )
 
 func main() {
@@ -35,23 +35,22 @@ func main() {
 		SSLMode:  os.Getenv("DB_SSLMODE"),
 	}
 
-	r := router.New()
+	app := fiber.New(fiber.Config{
+		JSONEncoder:  json.Marshal,
+		JSONDecoder:  json.Unmarshal,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	})
 
 	db := commonInfrastructure.NewPostgresDB(postgresConfig)
 
-	usersModule.Register(r, db)
-	todosModule.Register(r, db)
-	tenantsModule.Register(r, db)
-
-	server := &fasthttp.Server{
-		Handler:      r.Handler,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
-	}
+	usersModule.Register(app, db)
+	todosModule.Register(app, db)
+	tenantsModule.Register(app, db)
 
 	go func() {
 		log.Printf("Server starting on http://%s:%s", host, port)
-		if err := server.ListenAndServe(host + ":" + port); err != nil {
+		if err := app.Listen(host + ":" + port); err != nil {
 			log.Fatalf("HTTP server error: %v", err)
 		}
 		log.Println("Stopped serving new connections.")
@@ -64,7 +63,7 @@ func main() {
 	_, shutdownRelease := context.WithTimeout(context.Background(), 10*time.Second)
 	defer shutdownRelease()
 
-	if err := server.Shutdown(); err != nil {
+	if err := app.Shutdown(); err != nil {
 		log.Fatalf("HTTP shutdown error: %v", err)
 	}
 	log.Println("Graceful shutdown complete.")

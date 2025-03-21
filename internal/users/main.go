@@ -8,11 +8,11 @@ import (
 	usersDomain "github.com/enteresanlikk/go-modular-monolith/internal/users/domain"
 	usersInfrastructure "github.com/enteresanlikk/go-modular-monolith/internal/users/infrastructure"
 	usersPresentation "github.com/enteresanlikk/go-modular-monolith/internal/users/presentation"
-	"github.com/fasthttp/router"
+	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
 
-func Register(r *router.Router, db *gorm.DB) {
+func Register(r *fiber.App, db *gorm.DB) {
 	userRepo := usersInfrastructure.NewUserRepository(db)
 
 	tokenConfig := usersDomain.TokenConfig{
@@ -29,6 +29,6 @@ func Register(r *router.Router, db *gorm.DB) {
 	handler := usersPresentation.NewUsersHandler(registerService, loginService)
 
 	authGroup := r.Group("/auth")
-	authGroup.POST("/register", handler.Register)
-	authGroup.POST("/login", handler.Login)
+	authGroup.Post("/register", handler.Register)
+	authGroup.Post("/login", handler.Login)
 }
