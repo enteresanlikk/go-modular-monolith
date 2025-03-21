@@ -9,6 +9,7 @@ import (
 	"time"
 
 	commonInfrastructure "github.com/enteresanlikk/go-modular-monolith/internal/common/infrastructure"
+	tenantsModule "github.com/enteresanlikk/go-modular-monolith/internal/tenants"
 	todosModule "github.com/enteresanlikk/go-modular-monolith/internal/todos"
 	usersModule "github.com/enteresanlikk/go-modular-monolith/internal/users"
 	"github.com/fasthttp/router"
@@ -40,6 +41,7 @@ func main() {
 
 	usersModule.Register(r, db)
 	todosModule.Register(r, db)
+	tenantsModule.Register(r, db)
 
 	server := &fasthttp.Server{
 		Handler:      r.Handler,

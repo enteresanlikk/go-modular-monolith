@@ -19,11 +19,5 @@ func (s *TodoService) CreateTodo(req *CreateTodoRequest) (*TodoResponse, error) 
 		return nil, err
 	}
 
-	return &TodoResponse{
-		ID:        todo.ID,
-		Title:     todo.Title,
-		Completed: todo.Completed,
-		CreatedAt: todo.CreatedAt,
-		UpdatedAt: todo.UpdatedAt,
-	}, nil
+	return (&TodoResponse{}).FromTodo(todo), nil
 }
