@@ -1,13 +1,14 @@
-FROM golang:1.24
+FROM golang:1.24.1-alpine
 
-ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+WORKDIR /app
 
-WORKDIR /app/go-modular-monolith
-
-COPY go.mod go.sum ./
+COPY go.* ./
 RUN go mod download
 
 COPY . .
-RUN go build -o /app/go-modular-monolith/app .
 
-CMD ["/app/go-modular-monolith/app"]
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app ./cmd/...
+
+EXPOSE 8080
+
+CMD ["./app"]

@@ -1,4 +1,28 @@
 services:
+  app:
+    container_name: go_modular_monolith
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on:
+      - postgres
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8080
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=go_modular_monolith
+      - DB_SSLMODE=disable
+      - BCRYPT_COST=11
+      - JWT_SECRET=your_jwt_secret
+      - JWT_REFRESH_SECRET=your_jwt_refresh_secret
+
   postgres:
     image: postgres:17
     ports:
